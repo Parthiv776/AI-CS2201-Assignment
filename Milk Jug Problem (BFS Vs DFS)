@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_X 4 // Capacity of the 4-gallon jug
+#define MAX_Y 3 // Capacity of the 3-gallon jug
+#define GOAL 2  // Target amount of water in the 4-gallon jug
+
+// Structure to represent the current amount of water in both jugs
+typedef struct { int x, y; } State;
+
+// Matrix to keep track of previously visited states to avoid infinite loops
+bool visited[MAX_X + 1][MAX_Y + 1];
+
+// Function to reset the visited matrix before running a new search
+void resetVisited() {
+    for (int i = 0; i <= MAX_X; i++)
+        for (int j = 0; j <= MAX_Y; j++)
+            visited[i][j] = false;
+}
+
+// Generates all possible valid next moves from the current state
+int getSuccessors(State curr, State succ[]) {
+    int count = 0;
+    
+    // Calculate how much water can be poured between jugs without overflowing
+    int px = (curr.y < MAX_X - curr.x) ? curr.y : (MAX_X - curr.x);
+    int py = (curr.x < MAX_Y - curr.y) ? curr.x : (MAX_Y - curr.y);
+
+    // Array of all 6 possible rules/moves for the Water Jug problem: 
+    // Fill 4-gal, Fill 3-gal, Empty 4-gal, Empty 3-gal, Pour 3 to 4, Pour 4 to 3
+    State moves[6] = {
+        {MAX_X, curr.y}, 
+        {curr.x, MAX_Y}, 
+        {0, curr.y},     
+        {curr.x, 0},     
+        {curr.x + px, curr.y - px}, 
+        {curr.x - py, curr.y + py}  
+    };
+
+    // Filter out moves that have already been visited
+    for (int i = 0; i < 6; i++) {
+        if (!visited[moves[i].x][moves[i].y]) {
+            succ[count++] = moves[i];
+            visited[moves[i].x][moves[i].y] = true; // Mark as visited immediately
+        }
+    }
+    return count;
+}
+
+// Breadth-First Search using a Queue (FIFO)
+void bfs() {
+    State q[100];     // Queue array
+    int f = 0, r = 0; // Front and rear pointers for the queue
+    resetVisited();
+
+    q[r++] = (State){0, 0}; // Enqueue the start state (both jugs empty)
+    visited[0][0] = true;
+
+    printf("BFS Exploration:\n");
+    while (f < r) {
+        State curr = q[f++]; // Dequeue the front element
+        printf("(%d, %d)\n", curr.x, curr.y);
+
+        if (curr.x == GOAL) {
+            printf("Goal reached!\n");
+            return;
+        }
+
+        // Generate and enqueue all valid, unvisited successors
+        State succ[6];
+        int c = getSuccessors(curr, succ);
+        for (int i = 0; i < c; i++) {
+            q[r++] = succ[i];
+        }
+    }
+}
+
+// Depth-First Search using a Stack (LIFO)
+void dfs() {
+    State s[100]; // Stack array
+    int t = -1;   // Top pointer for the stack
+    resetVisited();
+
+    s[++t] = (State){0, 0}; // Push the start state
+    visited[0][0] = true;
+
+    printf("DFS Exploration:\n");
+    while (t >= 0) {
+        State curr = s[t--]; // Pop the top element
+        printf("(%d, %d)\n", curr.x, curr.y);
+
+        if (curr.x == GOAL) {
+            printf("Goal reached!\n");
+            return;
+        }
+
+        // Generate and push all valid, unvisited successors
+        State succ[6];
+        int c = getSuccessors(curr, succ);
+        for (int i = 0; i < c; i++) {
+            s[++t] = succ[i];
+        }
+    }
+}
+
+int main() {
+    bfs();
+    printf("\n");
+    dfs();
+    return 0;
+}
