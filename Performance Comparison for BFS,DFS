@@ -1,0 +1,5 @@
+Metric	                         BFS Implementation	                      DFS Implementation
+Memory Allocated              	~820 bytes (Fixed)	                       ~820 bytes (Fixed)
+Execution Time	                   < 1 millisecond	                         < 1 millisecond
+Solution Quality	              Optimal (Finds shortest path)	        Non-optimal (Finds first available path)
+Overflow Risk (100 limit)      	High (Queue fills up quickly)          	Low (Stack grows slowly)
