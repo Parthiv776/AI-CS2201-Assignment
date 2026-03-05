@@ -1,0 +1,24 @@
+AI assignment
+1. Turing Test Architecture
+The Turing Test requires a judge to interact with both a machine and a human without seeing them, determining which is which based purely on text responses.
+
+Architecture Design:
+
+Client Interface (Judge): A chat interface where the judge sends messages and receives responses from two hidden entities (Entity A and Entity B).
+
+Routing Server: An intermediary server that receives messages from the judge, randomly assigns Entity A and Entity B to be either the Human or the AI Agent at the start of the session, and routes messages accordingly.
+
+Human Interface: A separate chat client for the human participant.
+
+AI Agent (LLM): A language model hosted via an API (like Gemini) that processes incoming text and generates conversational responses.
+
+2. CAPTCHA Architecture
+CAPTCHA (Completely Automated Public Turing test to tell Computers and Humans Apart) acts as a reverse Turing test where the machine is the judge.
+
+Architecture Design:
+
+Challenge Generator (Backend): Generates a random puzzle (e.g., distorted text, image grid). It hashes the correct solution and stores it in a temporary session cache with a unique session ID.
+
+Client Interface (Frontend): Displays the challenge to the user. The user submits their answer.
+
+Verification Engine (Backend): Receives the user's input and the session ID. It compares the hash of the user's input with the stored hash. If they match, it issues a success token.
